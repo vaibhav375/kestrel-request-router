@@ -61,6 +61,8 @@ Truth = the team that closed the request. All figures come from `out/evaluation.
   a fine-tuned transformer, kNN, noise-cleaned training, metadata-based guesses for vague requests and an ensemble.
   None beat the router after correcting for multiple tests. An oracle that sees the answers reaches only 86.25% on
   the same quarters (router 86.11%).
+* **Round 3, operating levers:** auto-routing only confident requests (84.3%) is 98.4% right. The noise in outcomes
+  and the recent-context signal for vague requests were both tested and are not exploitable (`out/operating_modes.md`).
 * **Confidence is honest:** "high" = 83.6% of requests, 98.0% right. "Low" = 15.8%, 20.2% right, almost all vague.
 * **32 automated tests:** parsing, the policy §3 payment rule, last-request rule, vague flag, API contract, bad
   input (422), no model / no data (service starts, 503 with instructions), predictions file matches the sample, and

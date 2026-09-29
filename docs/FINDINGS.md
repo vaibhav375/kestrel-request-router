@@ -122,3 +122,26 @@ Holm p = 0.244. It is worth about Rs 12,000 a year if real, so it goes on the li
 side-by-side run. The fine-tuned transformer made exactly the router's predictions on clear requests, and gradient
 boosting and kNN were significantly worse. An oracle ceiling of 86.25% (vs the router's 86.11% on the same
 quarters) shows there was almost no room left.
+
+## 9. Round 3: can anything else raise accuracy? (`experiments/operating_modes.py`, `out/operating_modes.md`)
+
+**Remaining signals, ruled out:**
+* **Outcome noise on clear requests (1.6%) is unpredictable.** It spreads evenly over all teams, and no column
+  predicts it except a weak time-of-day link (p = 0.003, surprise rate 1.0–2.4%). Even the worst slot leaves the
+  usual team at 97.6%, so no prediction could ever change.
+* **Recent context for vague requests:** the majority closing team of clear requests (same product or all, 7/30/90
+  days back, only closed ones) predicts vague outcomes 16.0–21.9% of the time, against 21.8% for "always Repairs".
+
+**Operating levers, measured on the same backtest (6,502 predictions):**
+* **Selective routing:** auto-routing the 84.3% of requests with confidence ≥ 0.70 gives **98.4%** accuracy on those;
+  15.7% (almost all vague) go to a person or the clarifying question.
+* **Top-k:** the right team is in the top 2 for 88.8% and the top 3 for 91.1% of requests, but for vague requests
+  only 36.8% / 50.4%. Offering options is no substitute for asking.
+* **Vague rule vs metric:** the shipped rule ("always Repairs") is already best for macro-F1 (87.83%). The
+  product-based rule is marginally best for accuracy and cost (86.36%, not significant, see round 2). Rebalancing
+  for per-team recall lowers both metrics. My expectation that it would help macro-F1 was wrong.
+
+**Conclusion:** with this data the model is at its ceiling. The only way past ~86% is new information at intake:
+the clarifying question for the vague 16%. It cannot be measured on history; it needs a pilot. On one channel, ask
+it for half of the vague requests and not the other half, and compare "closed by first team". The gap to measure
+is large (22% → likely 80%+), so a few hundred vague requests, a couple of weeks of volume, are enough.
