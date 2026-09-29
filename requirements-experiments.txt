@@ -1,0 +1,4 @@
+# Only for re-running experiments/ (embedding + local-LLM benchmarks). Not needed for the service.
+-r requirements-dev.txt
+sentence-transformers>=3.0
+mlx-lm>=0.20 ; sys_platform == "darwin"

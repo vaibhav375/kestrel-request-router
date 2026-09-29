@@ -1,0 +1,11 @@
+# Policy §10: customer data must not be published or uploaded to public repositories.
+data/*
+!data/.gitkeep
+out/*.csv
+out/*.log
+models/
+scratch/
+.venv/
+__pycache__/
+.pytest_cache/
+.DS_Store

@@ -1,0 +1,8 @@
+# Service + training. Tested on Python 3.12, macOS (M1). No paid API, no GPU.
+pandas>=2.2,<3.0
+numpy>=1.26,<3.0
+scipy>=1.11
+scikit-learn>=1.5,<1.9
+joblib>=1.3
+fastapi>=0.110
+uvicorn>=0.29
