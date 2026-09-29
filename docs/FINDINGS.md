@@ -107,3 +107,18 @@ set reuses 99.5% of known wording, so C matters for live traffic, not for the te
 * **Metadata features** (channel, product, warranty): no measurable gain; the endpoint accepts them but ignores them.
 * **Dropping inconsistent records from training**: no measurable gain.
 * **Per-phrase majorities for vague requests**: these fit noise.
+
+## 8. Champion vs challengers (a second, pre-registered round)
+
+After shipping, I tested 11 more alternatives against the router under a protocol committed before running them
+(`docs/CHALLENGER_PROTOCOL.md`): rolling-origin backtest over three quarters (6,502 predictions), McNemar tests with
+Holm correction, then CV and held-out wording. Challengers included vague guesses by product, product × warranty and
+recent months; lookup thresholds; gradient boosting with metadata and time features; a fine-tuned transformer;
+noise-cleaned training; kNN on embeddings; and a majority-vote ensemble.
+
+**Result: no challenger beat the router significantly, so it stays** (`docs/CHALLENGER_RESULTS.md`). The closest
+was C1, which uses product to pick the best guess for vague requests: +0.25 points in the backtest, +0.15 in CV,
+Holm p = 0.244. It is worth about Rs 12,000 a year if real, so it goes on the list to re-test on fresh data after the
+side-by-side run. The fine-tuned transformer made exactly the router's predictions on clear requests, and gradient
+boosting and kNN were significantly worse. An oracle ceiling of 86.25% (vs the router's 86.11% on the same
+quarters) shows there was almost no room left.

@@ -54,7 +54,13 @@ Truth = the team that closed the request. All figures come from `out/evaluation.
 | 5-fold CV | all 10,822, stratified | 86.1% ± 0.3% | 77.2% |
 | New wording | GroupKFold by phrasing (every phrasing unseen); keyword rules from teams.csv only | 87.3% on stated needs (folds 70–98%) | – |
 | Local LLM, same 300 requests | out-of-time sample | 84.3% vs LLM 71.3% | 74.0% |
+| **11 challengers, pre-registered** | rolling-origin backtest, 3 quarters, 6,502 predictions | **86.11%; none significantly better** (best: +0.25 pts, Holm p = 0.24) | – |
 
+* **Is it the best we can get?** I ran a second round against 11 alternatives under a protocol committed before
+  running them (`docs/CHALLENGER_PROTOCOL.md` → `docs/CHALLENGER_RESULTS.md`). These included gradient boosting,
+  a fine-tuned transformer, kNN, noise-cleaned training, metadata-based guesses for vague requests and an ensemble.
+  None beat the router after correcting for multiple tests. An oracle that sees the answers reaches only 86.25% on
+  the same quarters (router 86.11%).
 * **Confidence is honest:** "high" = 83.6% of requests, 98.0% right. "Low" = 15.8%, 20.2% right, almost all vague.
 * **32 automated tests:** parsing, the policy §3 payment rule, last-request rule, vague flag, API contract, bad
   input (422), no model / no data (service starts, 503 with instructions), predictions file matches the sample, and
@@ -118,7 +124,9 @@ Yes, in the first hour, as soon as I joined the resolution log to the labels:
   route a message that contains no need.
 * **Sentence embeddings / PyTorch.** Same accuracy on known wording (85.7% vs 85.8%), ~100× slower, and ~2 GB of
   install for a service that must start on a clean machine.
-* **Metadata features.** Tested, no gain; the endpoint accepts them but ignores them.
+* **Metadata features, and the product-based guess for vague requests (C1).** Tested; C1 was +0.25 points but not
+  significant (Holm p = 0.24), worth ~Rs 12,000/year if real, so it is left for re-testing on fresh data. A
+  fine-tuned transformer and gradient boosting were also left out: no better, or worse, and far heavier.
 * **Live IVR/CRM integration.** Needs Tanmay, and should follow the side-by-side run.
 * **SLA and resolution-time modelling.** One finding was enough for the decision: misrouted requests take twice as
   long to close (16.6 h vs 8.2 h median).

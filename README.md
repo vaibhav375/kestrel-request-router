@@ -67,6 +67,7 @@ pip install -r requirements-dev.txt && python -m pytest    # 32 tests, ~3 s
 | `out/evaluation.md` | out-of-time test with CIs, the copy-the-bot comparison, per-team precision/recall, confusion matrix, confidence calibration, 5-fold CV, new-wording test, every error type, expected test score, rupees, team volumes |
 | `out/experiments.md`, `out/hybrid.md` | the 20 approaches compared on three validation schemes |
 | `out/llm_benchmark.md` | a free local LLM (Qwen2.5-3B) tried on 300 requests |
+| `docs/CHALLENGER_PROTOCOL.md` → `docs/CHALLENGER_RESULTS.md` | second round: 11 challengers (incl. fine-tuned transformer, gradient boosting, ensembles) vs the router under a pre-registered rule; none significantly better |
 | `out/errors_out_of_time.csv` | every request it got wrong in the out-of-time test |
 | `docs/FINDINGS.md` | what the data showed, what I tried, changed and threw away |
 | `docs/memo.md` | one-page memo to Ritu |
@@ -104,7 +105,7 @@ kestrel/        data.py (loading + fixes) · text.py (parsing) · router.py (mod
 app/            server.py (FastAPI) · static/index.html (the screen)
 train.py        trains, writes predictions.csv (checked against sample_submission.csv)
 evaluate.py     writes out/evaluation.md
-experiments/    compare_models.py · hybrid.py · llm_benchmark.py
+experiments/    compare_models.py · hybrid.py · llm_benchmark.py · challengers.py · challenger_robustness.py
 tests/          32 tests: parsing, routing rules, API contract + failure modes, real-pack checks (skipped without data)
 docs/           FINDINGS.md · memo.md · submission-form.md · RECORDING.md
 ```
