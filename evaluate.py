@@ -107,7 +107,8 @@ def main() -> None:
                       index=[ABBR[t] for t in TEAMS], columns=[ABBR[t] for t in TEAMS])
     cm.to_csv(OUT / "confusion_out_of_time.csv")
     L += ["Confusion matrix (rows = closing team, columns = router):", "", "```", cm.to_string(), "```", "",
-          "Most errors sit in the columns for Repairs: that is where vague requests go (best available guess).", ""]
+          "Most errors sit in the Repairs column, and some in Warranty Claims: that is where vague requests go (the best "
+          "available guess, by product). Almost all other cells are near zero.", ""]
 
     # calibration
     L += ["### Is the confidence honest?", "", "| confidence level | share of requests | router right |", "|---|---|---|"]

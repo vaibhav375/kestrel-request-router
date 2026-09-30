@@ -73,7 +73,7 @@ def report_lines(d: pd.DataFrame, ok_router_rate: float, ok_bot_rate: float, cle
          f"{lakh(clarified_mis * n * c['cost_per_misroute'])} | Rs 0 | saves up to {lakh(saved_clarified + LICENCE_RS)} |", "",
          "Error rates are the out-of-time rates from section 1 applied to 12 months of volume; cost per misroute is the "
          "historical average (it includes that request's own transfers). Run cost of the router: **Rs 0 per request** – "
-         "no API, no per-request fee; it answers in under 1 ms on a laptop CPU.", "",
+         "no API, no per-request fee; it answers in a few milliseconds on a laptop CPU (worst case measured 3.7 ms).", "",
          "**Who is busiest** (last 6 months, requests per month). Planning headcount on the bot's labels would over-staff "
          "Repairs, Billing and Filters & Consumables and under-staff Installs, Returns and Warranty:", "",
          "| team | bot label says | actually closed | share | bot over/under-states by |", "|---|---|---|---|---|"]

@@ -47,7 +47,7 @@ RET    0    0    0    1   54  264    7
 WAR    1    1    0    0   34    3  220
 ```
 
-Most errors sit in the columns for Repairs: that is where vague requests go (best available guess).
+Most errors sit in the Repairs column, and some in Warranty Claims: that is where vague requests go (the best available guess, by product). Almost all other cells are near zero.
 
 ### Is the confidence honest?
 
@@ -117,7 +117,7 @@ Weighted by the cross-validated accuracy of each type: **86.3%**; the out-of-tim
 | Router, bot switched off | 14.0% | Rs 8.4 lakh | Rs 0 | **saves Rs 8.8 lakh** |
 | Router + one intake question for vague requests (projection) | ~2.1% | Rs 1.2 lakh | Rs 0 | saves up to Rs 16.0 lakh |
 
-Error rates are the out-of-time rates from section 1 applied to 12 months of volume; cost per misroute is the historical average (it includes that request's own transfers). Run cost of the router: **Rs 0 per request** – no API, no per-request fee; it answers in under 1 ms on a laptop CPU.
+Error rates are the out-of-time rates from section 1 applied to 12 months of volume; cost per misroute is the historical average (it includes that request's own transfers). Run cost of the router: **Rs 0 per request** – no API, no per-request fee; it answers in a few milliseconds on a laptop CPU (worst case measured 3.7 ms).
 
 **Who is busiest** (last 6 months, requests per month). Planning headcount on the bot's labels would over-staff Repairs, Billing and Filters & Consumables and under-staff Installs, Returns and Warranty:
 
