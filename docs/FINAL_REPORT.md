@@ -45,7 +45,7 @@ message
  └► clean: fix garbled legacy text, merge renamed teams
  └► parse: drop greeting, order no., sign-off, payment remark; the LAST request decides
  └► [B4] wording unknown? fix Hinglish + spelling, read again
-     ├─ states no need ─► best guess by product (A1, shown as a guess), low confidence, 7-option question
+     ├─ states no need ─► guess by product (A1, labelled a guess) + 7-option question
      ├─ wording known  ─► team that closed most past requests with that wording (98% right)
      └─ new wording    ─► keyword rules → text model; unsure → clarifying question
  └► output: team · confidence · auto_route (C1) · reasons for the agent · alternatives
