@@ -2,7 +2,8 @@
 
     uvicorn app.server:app --port 8000      then open http://localhost:8000
 
-POST /route   one request record as JSON -> team, confidence, reasons an agent can read
+POST /route     one request record as JSON -> team, confidence, reasons an agent can read, auto_route flag
+POST /feedback  the team an agent confirmed (saved to data/corrections.csv, used by the next python train.py)
 GET  /health  is a model loaded, which version, trained on what
 GET  /teams   the seven teams and what each handles
 GET  /        the screen (app/static/index.html), which calls POST /route
@@ -13,9 +14,11 @@ too, the service still starts and /route answers 503 with instructions.
 """
 from __future__ import annotations
 
+import csv
 import logging
 import sys
 from contextlib import asynccontextmanager
+from datetime import datetime
 from pathlib import Path
 from typing import Literal, Optional
 
@@ -77,12 +80,50 @@ def _router() -> Router:
     return STATE["router"]
 
 
+REVIEW_QUEUE = ROOT / "out" / "review_queue.csv"        # B5: requests the router was unsure about
+CORRECTIONS = ROOT / "data" / "corrections.csv"          # B5: agent-confirmed teams, read by train.py
+
+
+def _append_csv(path: Path, row: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    row = {"logged_at": datetime.now().isoformat(timespec="seconds"), **row}
+    new = not path.exists()
+    with path.open("a", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(row))
+        if new:
+            w.writeheader()
+        w.writerow(row)
+
+
+class Feedback(BaseModel):
+    """B5: the team an agent confirmed for a request (e.g. after asking the clarifying question)."""
+    request_id: Optional[str] = None
+    request_text: str = Field(..., min_length=1, max_length=2000)
+    product_family: Optional[str] = None
+    team: str
+
+
+@app.post("/feedback")
+def feedback(fb: Feedback) -> dict:
+    from kestrel.data import TEAMS
+    if fb.team not in TEAMS:
+        raise HTTPException(status_code=422, detail=f"team must be one of: {', '.join(TEAMS)}")
+    _append_csv(CORRECTIONS, {"request_id": fb.request_id, "request_text": fb.request_text,
+                              "product_family": fb.product_family, "team": fb.team,
+                              "confirmed_at": datetime.now().isoformat(timespec="seconds")})
+    return {"saved": True, "used_at_next": "python train.py"}
+
+
 @app.post("/route")
 def route(record: RequestRecord) -> dict:
     r = _router()
     out = r.route(record.model_dump())
-    # channel / product / warranty are accepted but do not change the decision: tested, they add nothing
-    # (experiments: +0.0 to +0.6 points, within noise). They are echoed so the screen can show them.
+    if not out.get("auto_route"):
+        _append_csv(REVIEW_QUEUE, {"request_id": record.request_id, "request_text": record.request_text,
+                                   "product_family": record.product_family, "router_team": out["team"],
+                                   "route_type": out["route_type"], "confidence": out["confidence"]})
+    # product_family is used only for the best guess on vague requests (A1, labelled a guess). channel and
+    # warranty are accepted but do not change the decision: tested, they add nothing (+0.0 to +0.6 points).
     out["input"] = record.model_dump(exclude_none=True)
     return out
 

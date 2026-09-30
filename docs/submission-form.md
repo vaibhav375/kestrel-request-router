@@ -8,11 +8,11 @@ will actually **close** it, with reasons an agent can read. It is trained on whe
 
 **Decision it supports: switch the Rs 3.2 lakh/year routing bot off.**
 
-* **Number:** 85.7% of requests reach the closing team first, against the bot's 76.7%. That is an out-of-time test
+* **Number:** 86.0% of requests reach the closing team first, against the bot's 76.7%. That is an out-of-time test
   on 2,135 Apr–Jun 2026 requests the model never saw. When the customer states a need, it is right 98.0% of the time.
 * **Rupees:** misrouting costs about **Rs 14.7 lakh a year** today (3,129 transfers × Rs 305, plus Rs 260 extra
-  contact per misroute, policy §4). The router cuts wrong-first-team from 23% to 14%: about **Rs 5.5 lakh** saved.
-  With the **Rs 3.2 lakh** licence, the total is **about Rs 8.7 lakh a year**, at Rs 0 per request. If one intake
+  contact per misroute, policy §4). The router cuts wrong-first-team from 23% to 14%: about **Rs 5.6 lakh** saved.
+  With the **Rs 3.2 lakh** licence, the total is **about Rs 8.8 lakh a year**, at Rs 0 per request. If one intake
   question for vague requests works, up to Rs 16 lakh; that is a projection that needs a pilot.
 * **Second decision it supports (headcount, which Ritu raised):** real monthly volumes per team. The bot's labels
   over-state Repairs (+42/month), Billing (+24) and Consumables (+23), and under-state Installs (−27),
@@ -31,10 +31,10 @@ Repairs, which is not how the cost works.
 
 **How I estimated it:**
 1. **Out-of-time:** trained on Apr 2025 – Mar 2026, scored on Apr – Jun 2026 (2,135 requests, all CRM, the same
-   source as the test set). Accuracy **85.7%** (bootstrap 95% CI 84.3–87.2%), macro-F1 87.5%.
-2. **5-fold cross-validation** on all 10,822 requests: **86.1% ± 0.3%**.
+   source as the test set). Accuracy **86.0%** (bootstrap 95% CI 84.5–87.5%), macro-F1 87.2%.
+2. **5-fold cross-validation** on all 10,822 requests: **86.3% ± 0.2%**.
 3. **Mix-weighted:** the router tags each test request by type. 83.7% use wording seen before (98.3% right in CV),
-   15.7% state no need (21.7%), 0.5% use new wording (87.3% on the fair held-out-wording test). Weighted: **86.2%**.
+   15.7% state no need (22.6%), 0.5% use new wording (87.3% on the fair held-out-wording test). Weighted: **86.3%**.
 4. **Why not higher:** ~16% of requests say only "please call me about my X", and past ones were closed by all seven
    teams (best guess, Repairs, is right 22% of the time). About 2% of clear requests were closed by an unrelated team,
    which looks like noise in the log. Together these cap any text-only router at ~86–87%.
@@ -49,11 +49,12 @@ Truth = the team that closed the request. All figures come from `out/evaluation.
 
 | check | split | router | bot |
 |---|---|---|---|
-| Out-of-time | train to 31 Mar 2026 / score Apr–Jun 2026 (2,135) | **85.7%** | 76.7% |
+| Out-of-time | train to 31 Mar 2026 / score Apr–Jun 2026 (2,135) | **86.0%** | 76.7% |
 | Model trained to copy the bot's labels | same | 77.0% (but **91.8%** agreement with the labels) | – |
-| 5-fold CV | all 10,822, stratified | 86.1% ± 0.3% | 77.2% |
+| 5-fold CV | all 10,822, stratified | 86.3% ± 0.2% | 77.2% |
 | New wording | GroupKFold by phrasing (every phrasing unseen); keyword rules from teams.csv only | 87.3% on stated needs (folds 70–98%) | – |
 | Local LLM, same 300 requests | out-of-time sample | 84.3% vs LLM 71.3% | 74.0% |
+| **Round 4: A1, B1–B5, C1–C2, pre-registered** | known wording, strict new wording, synthetic typos + Hinglish, corrections loop | adopted A1 (+0.25), B4 (heavy typos +3.6, Hinglish +3.3), B5, C1; rejected B1, B2, B3, C2 | – |
 | **11 challengers, pre-registered** | rolling-origin backtest, 3 quarters, 6,502 predictions | **86.11%; none significantly better** (best: +0.25 pts, Holm p = 0.24) | – |
 
 * **Is it the best we can get?** I ran a second round against 11 alternatives under a protocol committed before
@@ -63,13 +64,14 @@ Truth = the team that closed the request. All figures come from `out/evaluation.
   the same quarters (router 86.11%).
 * **Round 3, operating levers:** auto-routing only confident requests (84.3%) is 98.4% right. The noise in outcomes
   and the recent-context signal for vague requests were both tested and are not exploitable (`out/operating_modes.md`).
-* **Confidence is honest:** "high" = 83.6% of requests, 98.0% right. "Low" = 15.8%, 20.2% right, almost all vague.
-* **32 automated tests:** parsing, the policy §3 payment rule, last-request rule, vague flag, API contract, bad
+* **Round 4:** every remaining idea was built as a switch and tested under a pre-committed protocol (`docs/ROUND4_RESULTS.md`). Adopted: Hinglish/typo repair (heavy typos 94.1% → 97.6%), a corrections loop (new phrasings reach 98.4% after 3 agent-confirmed examples), the `auto_route` flag, and the product-based guess for vague requests (labelled a guess).
+* **Confidence is honest:** "high" = 83.6% of requests, 98.0% right. "Low" = 15.8%, 21.9% right, almost all vague.
+* **44 automated tests:** parsing, the policy §3 payment rule, last-request rule, vague flag, API contract, bad
   input (422), no model / no data (service starts, 503 with instructions), predictions file matches the sample, and
   an accuracy regression check on the real pack. Also run on a clean copy with a fresh virtualenv.
 
-**Error rate: 14.3% (305 of 2,135).** What it gets wrong:
-* **268 vague requests** ("please call back regarding my purifier", "issue with fan"). Nobody can route these from
+**Error rate: 14.0% (299 of 2,135).** What it gets wrong:
+* **262 vague requests** ("please call back regarding my purifier", "issue with fan"). Nobody can route these from
   the text; the router flags them and offers one clarifying question.
 * **37 clear requests (2.1%)** closed by an unrelated team, e.g. "how to clean air fryer" closed by Billing, often
   with 0 transfers. These look like recording noise, not routing errors.
@@ -112,7 +114,7 @@ Yes, in the first hour, as soon as I joined the resolution log to the labels:
   wording will be messier; the fair estimate for new wording is ~87% on stated needs, varying 70–98% by fold.
 * **The shipped keyword rules for new wording were written after reading the data.** On the held-out-wording test
   they score 98%, which I do not count; I report the teams.csv-only rule set (87%) instead.
-* **Vague requests are guessed as Repairs (22% right).** It is the best available, but it is still a guess. The
+* **Vague requests are a guess (22% right).** Since round 4 the guess uses the product (e.g. vague water-purifier requests → Warranty Claims). That was +0.25 points but not statistically proven, and agents are told it is a guess. It changed 49 test predictions and costs 0.3 points of macro-F1. It is the best available, but it is still a guess. The
   98% "with clarification" figure is a projection that assumes customers answer the question correctly.
 * **Rupee savings** use the historical average cost of a misroute (Rs 697) and the last 12 months' volume, and
   assume the router's remaining errors cost the same as the bot's.

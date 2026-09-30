@@ -72,3 +72,28 @@ def test_real_load_router_reports_missing_data(monkeypatch, tmp_path):
     server.load_router()
     assert server.STATE["router"] is None
     assert "data pack was not found" in server.STATE["error"]
+
+
+def test_feedback_is_saved_and_uncertain_requests_are_queued(client, monkeypatch, tmp_path):
+    """B5: /feedback writes corrections; requests the router is unsure about go to the review queue."""
+    import pandas as pd
+    monkeypatch.setattr(server, "CORRECTIONS", tmp_path / "corrections.csv")
+    monkeypatch.setattr(server, "REVIEW_QUEUE", tmp_path / "review_queue.csv")
+    client.post("/route", json={"request_text": "please call back regarding air fryer"})       # vague -> queued
+    client.post("/route", json={"request_text": "invoice not received for air fryer"})        # confident -> not queued
+    q = pd.read_csv(tmp_path / "review_queue.csv")
+    assert len(q) == 1 and q["route_type"].iloc[0] == "vague"
+    res = client.post("/feedback", json={"request_text": "please call back regarding air fryer", "team": "Billing"})
+    assert res.status_code == 200
+    assert pd.read_csv(tmp_path / "corrections.csv")["team"].tolist() == ["Billing"]
+    assert client.post("/feedback", json={"request_text": "x", "team": "Sales"}).status_code == 422
+
+
+def test_corrections_are_added_at_retrain(tmp_path):
+    import pandas as pd
+    import train
+    pd.DataFrame({"request_text": ["my purifier is weird"], "team": ["Repairs"], "product_family": ["Water Purifier"],
+                  "confirmed_at": ["2026-10-01T10:00:00"]}).to_csv(tmp_path / "corrections.csv", index=False)
+    c = train.load_corrections(tmp_path)
+    assert c["final_team_cur"].tolist() == ["Repairs"] and c["text"].tolist() == ["my purifier is weird"]
+    assert len(train.load_corrections(tmp_path / "nowhere")) == 0

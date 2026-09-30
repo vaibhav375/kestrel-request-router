@@ -49,6 +49,9 @@
   .clarify .opts button { text-align: left; }
   .clarify .opts button.chosen { border-color: var(--accent); background: #e8f1f8; font-weight: 600; }
   .picked { margin-top: 8px; font-size: 14px; }
+  .clarify .opts button.likely { border-color: #d9b56b; }
+  .route-mode { margin-top: 8px; font-size: 13px; font-weight: 600; }
+  .route-mode.auto { color: var(--high); } .route-mode.manual { color: var(--medium); }
   .error { color: var(--low); background: #fdeeec; border: 1px solid #f3c9c3; padding: 10px; border-radius: 7px; }
   details { margin-top: 16px; } details pre { background: #f3f2ee; padding: 10px; border-radius: 7px; overflow: auto;
             font-size: 12px; max-height: 320px; }
@@ -131,16 +134,25 @@ function render(d) {
   line.append(el("span", "meta", d.route_type === "new_wording"
     ? "new wording – estimate, not history" : `${pctText(d.confidence)} of similar past requests closed here`));
   out.append(line);
+  out.append(el("div", "route-mode " + (d.auto_route ? "auto" : "manual"),
+    d.auto_route ? "Auto-route: yes — confident enough to send without checking"
+                 : "Auto-route: no — ask the customer or let an agent confirm"));
 
   if (d.needs_clarification && d.clarifying_question) {
     const box = el("div", "clarify");
     box.append(el("p", null, "Ask: " + d.clarifying_question.question));
     const opts = el("div", "opts"); const picked = el("div", "picked");
     d.clarifying_question.options.forEach(o => {
-      const b = el("button", null, o.label); b.type = "button";
+      const b = el("button", o.likely ? "likely" : null, o.label + (o.likely ? "  · likely" : "")); b.type = "button";
       b.addEventListener("click", () => {
         opts.querySelectorAll("button").forEach(x => x.classList.remove("chosen")); b.classList.add("chosen");
-        picked.textContent = `Customer's answer → route to ${o.team}.`;
+        picked.textContent = `Customer's answer → route to ${o.team}. Saving as a correction…`;
+        fetch("/feedback", { method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ request_id: d.request_id, request_text: d.input.request_text,
+                                 product_family: d.input.product_family, team: o.team }) })
+          .then(r => { picked.textContent = `Customer's answer → route to ${o.team}. ` +
+            (r.ok ? "Saved; the router learns it at the next retrain." : "Could not save the correction."); })
+          .catch(() => { picked.textContent = `Customer's answer → route to ${o.team}. Could not save the correction.`; });
       });
       opts.append(b);
     });

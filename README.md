@@ -3,10 +3,10 @@
 Routes each new service request to the team that will actually close it, and gives the reasons an agent can read.
 It replaces the vendor routing bot (Rs 3.2 lakh a year).
 
-**Headline (out-of-time test, Apr–Jun 2026, 2,135 requests the model never saw):** the router sends **85.7%** of
+**Headline (out-of-time test, Apr–Jun 2026, 2,135 requests the model never saw):** the router sends **86.0%** of
 requests to the team that closed them; the bot managed **76.7%**. On requests that state a need it gets 98.0% right.
 The other ~16% say only "please call me about my purifier". No text router can place those, so the router flags
-them and suggests one clarifying question. Worth about **Rs 8.7 lakh a year**; costs **Rs 0 per request**.
+them and suggests one clarifying question. Worth about **Rs 8.8 lakh a year**; costs **Rs 0 per request**.
 
 ## Run it
 
@@ -52,14 +52,17 @@ options), `alternatives`, `route_type` (`seen` / `vague` / `new_wording`) and `r
             "Repairs handles: Product faults, breakdowns, error codes, noise, leaks - anything that needs a technician to fix."]
 ```
 
-Only `request_text` is required. `channel`, `product_family` and `warranty_status` are accepted and validated but
-do not change the decision: they were tested and added nothing. Interactive API docs are at `/docs`.
+Only `request_text` is required. `product_family` is used only for the best guess on vague requests (labelled a guess).
+`channel` and `warranty_status` are accepted but do not change the decision: tested, they added nothing. Every answer
+carries `auto_route` (confident enough to send without checking). Requests that are not auto-routed are logged to
+`out/review_queue.csv`; `POST /feedback` saves the team an agent confirmed to `data/corrections.csv`, and the next
+`python train.py` learns from it. The screen's clarifying-question buttons call `/feedback`. Interactive API docs are at `/docs`.
 
 ## Evidence
 
 ```bash
 python evaluate.py                      # -> out/evaluation.md (~1 min)
-pip install -r requirements-dev.txt && python -m pytest    # 32 tests, ~3 s
+pip install -r requirements-dev.txt && python -m pytest    # 44 tests, ~3 s
 ```
 
 | file | what it shows |
@@ -67,6 +70,7 @@ pip install -r requirements-dev.txt && python -m pytest    # 32 tests, ~3 s
 | `out/evaluation.md` | out-of-time test with CIs, the copy-the-bot comparison, per-team precision/recall, confusion matrix, confidence calibration, 5-fold CV, new-wording test, every error type, expected test score, rupees, team volumes |
 | `out/experiments.md`, `out/hybrid.md` | the 20 approaches compared on three validation schemes |
 | `out/llm_benchmark.md` | a free local LLM (Qwen2.5-3B) tried on 300 requests |
+| `docs/ROUND4_PROTOCOL.md` → `docs/ROUND4_RESULTS.md`, `out/round4.md` | round 4: A1, B1–B5, C1–C2 tested as switches; adopted A1, B4 (typo/Hinglish repair), B5 (corrections loop), C1 (auto-route flag) |
 | `out/operating_modes.md` | round 3: selective routing (84% auto-routed at 98.4%), top-k, vague-request rule per metric |
 | `docs/CHALLENGER_PROTOCOL.md` → `docs/CHALLENGER_RESULTS.md` | second round: 11 challengers (incl. fine-tuned transformer, gradient boosting, ensembles) vs the router under a pre-registered rule; none significantly better |
 | `out/errors_out_of_time.csv` | every request it got wrong in the out-of-time test |
@@ -106,7 +110,7 @@ kestrel/        data.py (loading + fixes) · text.py (parsing) · router.py (mod
 app/            server.py (FastAPI) · static/index.html (the screen)
 train.py        trains, writes predictions.csv (checked against sample_submission.csv)
 evaluate.py     writes out/evaluation.md
-experiments/    compare_models.py · hybrid.py · llm_benchmark.py · challengers.py · challenger_robustness.py · operating_modes.py
-tests/          32 tests: parsing, routing rules, API contract + failure modes, real-pack checks (skipped without data)
-docs/           FINDINGS.md · memo.md · submission-form.md · RECORDING.md
+experiments/    compare_models.py · hybrid.py · llm_benchmark.py · challengers.py · challenger_robustness.py · operating_modes.py · round4.py · generate_synthetic.py
+tests/          44 tests: parsing, routing rules, round-4 switches, feedback loop, API contract + failure modes, real-pack checks (skipped without data)
+docs/           FINDINGS.md · memo.md · submission-form.md · RECORDING.md · CHALLENGER_* · ROUND4_*
 ```

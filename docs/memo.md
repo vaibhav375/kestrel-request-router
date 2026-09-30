@@ -32,8 +32,8 @@ On the three most recent months it had never seen (April–June 2026, 2,135 requ
 | | per year |
 |---|---|
 | Bot licence no longer paid | **Rs 3.2 lakh** |
-| Fewer transfers and repeat contacts (wrong first team falls from 23% to 14%) | **Rs 5.5 lakh** |
-| **Total saving** | **about Rs 8.7 lakh** |
+| Fewer transfers and repeat contacts (wrong first team falls from 23% to 14%) | **Rs 5.6 lakh** |
+| **Total saving** | **about Rs 8.8 lakh** |
 | If the intake question works (to be proven in a pilot) | up to Rs 16 lakh |
 
 Misrouting costs about Rs 14.7 lakh a year today: 3,129 transfers at Rs 305, plus Rs 260 for each repeat contact.
@@ -55,7 +55,8 @@ and Consumables, and under-staff Installs, Returns and Warranty.
 2. **Start a two-week side-by-side run (Tanmay):** the bot keeps routing while the router's choice is logged
    next to it. Time the switch-off for after this run, so the 86% is confirmed on live requests first.
 3. **Pilot the intake question on one channel (Meenal)**, for example WhatsApp. The seven options are already built
-   into the router's screen.
+   into the router's screen, and each answer an agent picks is saved so the router learns it at the next monthly
+   retrain.
 4. **Hold headcount decisions** until you have seen the real volumes above.
 
 *Caveats: tested on history, not on live traffic. About 2% of requests in the log were closed by an unrelated team,

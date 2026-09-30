@@ -71,7 +71,8 @@ Three validation schemes: **A** out-of-time (train to Mar 2026, score Apr–Jun 
 | Frozen bge-small sentence embeddings (local) + LR | 85.7% | ~100× slower, needs PyTorch |
 | Lookup of past outcomes for the last request | 85.8% | best, and explainable |
 | Hand-written rules only | 84.7% | rules were written after reading the data |
-| **Chosen router (after two parsing fixes)** | **85.7%** (CV 86.1% ± 0.3) | 98.0% on requests that state a need |
+| Chosen router (after two parsing fixes) | 85.7% (CV 86.1% ± 0.3) | 98.0% on requests that state a need |
+| **Final router (after round 4: + A1 product-based vague guess, + B4 repair)** | **86.0%** (CV 86.3% ± 0.2) | 98.0% clear, 22.0% vague |
 | Local LLM Qwen2.5-3B, zero-shot (300-request sample) | 71.3% | same 300: router 84.3%, bot 74.0%; 2.9 s/request |
 | Local LLM Qwen2.5-3B, with data-derived hints | 68.0% | hints made it worse; 3.4 s/request |
 
@@ -145,3 +146,12 @@ quarters) shows there was almost no room left.
 the clarifying question for the vague 16%. It cannot be measured on history; it needs a pilot. On one channel, ask
 it for half of the vague requests and not the other half, and compare "closed by first team". The gap to measure
 is large (22% → likely 80%+), so a few hundred vague requests, a couple of weeks of volume, are enough.
+
+## 10. Round 4: every remaining idea, built as a switch and tested (`docs/ROUND4_RESULTS.md`)
+
+Protocol committed first (`docs/ROUND4_PROTOCOL.md`), with the Hinglish dictionary written before the Hinglish test
+set existed. **Adopted:** A1 (product-based guess for vague requests, shown as a guess), B4 (Hinglish + spelling
+repair: heavy typos 94.1% → 97.6%, Hinglish 78.7% → 82.0%), B5 (corrections loop: a new phrasing reaches
+known-wording accuracy after 3 agent-confirmed examples) and C1 (`auto_route` flag). **Rejected:** B1 and B3 (no
+effect on new wording), B2 (−10 points), C2 (worse than today's option order). **Embeddings** helped new wording
+(+2.4) but fell short of the 3-point bar for adding PyTorch. Final router: 86.0% out-of-time (was 85.7%), CV 86.3%.
