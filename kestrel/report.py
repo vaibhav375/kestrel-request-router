@@ -393,15 +393,6 @@ Installs, Returns and Warranty.</p>
 {card("Requests per team per month", "What the bot's labels suggest vs what each team actually closed (last 6 months).",
       chart_volumes(d))}
 
-<h2><span class="n">9</span>What to do next</h2>
-<ol>
-  <li><strong>Run the router side by side with the bot for two weeks</strong>, then switch the bot off. Track "closed by
-  the first team": 77% today, target 86% or better.</li>
-  <li><strong>Pilot the clarifying question on one channel</strong> (for example WhatsApp). It is the only lever that
-  goes beyond about 86%, because it adds information the message does not contain.</li>
-  <li><strong>Use real volumes for headcount</strong>, not the bot's labels.</li>
-  <li><strong>Retrain monthly</strong> with the teams agents confirm.</li>
-</ol>
 <div class="callout warn"><strong>Limits.</strong> Tested on history, not live traffic. The recorded outcomes are about 2%
 noisy. The best guess for vague requests is labelled as a guess: it was not proven better than the simpler rule. The typo
 and Hinglish results come from generated test messages.</div>
