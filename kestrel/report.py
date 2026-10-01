@@ -77,8 +77,7 @@ def chart_target(va) -> str:
 
 
 def chart_bot_monthly(d) -> str:
-    m = d.groupby(d["created_at"].dt.to_period("M").astype(str)).apply(
-        lambda g: (g["bot_team"] == g["final_team_cur"]).mean() * 100)
+    m = (d["bot_team"] == d["final_team_cur"]).groupby(d["created_at"].dt.to_period("M").astype(str)).mean() * 100
     f = go.Figure(go.Scatter(x=m.index, y=m.values, mode="lines+markers", line=dict(color=BOT, width=2),
                              marker=dict(size=8), name="Vendor bot", hovertemplate="%{x}: %{y:.1f}%<extra></extra>"))
     f.add_annotation(x=m.index[-1], y=m.values[-1], text=f"{m.values[-1]:.0f}%", showarrow=False, xshift=22,
@@ -88,7 +87,7 @@ def chart_bot_monthly(d) -> str:
 
 
 def chart_bot_by_label(d) -> str:
-    acc = d.groupby("bot_team").apply(lambda g: (g["bot_team"] == g["final_team_cur"]).mean() * 100).sort_values()
+    acc = ((d["bot_team"] == d["final_team_cur"]).groupby(d["bot_team"]).mean() * 100).sort_values()
     colors = [BOT if v < 80 else GRAY for v in acc.values]
     f = go.Figure(go.Bar(x=acc.values, y=acc.index, orientation="h", marker_color=colors,
                          text=[f"{v:.0f}%" for v in acc.values], textposition="outside",
