@@ -267,7 +267,9 @@ footer { color: var(--muted); font-size: 13px; margin-top: 40px; border-top:1px 
 
 
 def card(title: str, caption: str, chart: str) -> str:
-    return f'<div class="card"><h3>{title}</h3><p class="cap">{caption}</p>{chart}</div>'
+    import re
+    cid = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")[:48]  # anchor, e.g. report.html#round-2-...
+    return f'<div class="card" id="{cid}"><h3>{title}</h3><p class="cap">{caption}</p>{chart}</div>'
 
 
 def main() -> None:

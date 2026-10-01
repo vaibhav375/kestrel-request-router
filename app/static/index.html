@@ -100,6 +100,14 @@ const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls)
 
 document.querySelectorAll(".examples button").forEach(b => b.addEventListener("click", () => { $("text").value = b.dataset.t; $("text").focus(); }));
 
+// Deep link: /?q=<message>&product=<family> pre-fills the form and routes it (used for demos and the walkthrough video).
+const params = new URLSearchParams(location.search);
+if (params.get("q")) {
+  $("text").value = params.get("q");
+  if (params.get("product")) $("product").value = params.get("product");
+  setTimeout(() => $("f").requestSubmit(), 300);
+}
+
 fetch("/health").then(r => r.json()).then(h => {
   $("foot").textContent = h.status === "ok"
     ? `Model ${h.model_version} · trained on ${h.trained_on_requests.toLocaleString()} past requests up to ${h.trained_until} · runs locally, no paid API.`

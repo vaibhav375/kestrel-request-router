@@ -9,3 +9,4 @@ scratch/
 __pycache__/
 .pytest_cache/
 .DS_Store
+out/video_frames/
