@@ -31,7 +31,7 @@ scored against the bot's labels.
 * **Two requests in one message: the last one decides** (542 of 549 messages, 98.7%).
 * **~16% of requests state no need** ("please call me about my purifier"). Their outcomes are spread over all seven
   teams, and no column predicts them. This caps *any* text-only router at ~86%. An oracle that sees the answers
-  reaches only 86.25%.
+  reaches only 86.25% (86.8% if it also uses product).
 * **~1.6% of clear requests are closed by an unrelated team** at random (recording noise).
 * **Data fixes:** team renames merged; legacy Zoho mojibake repaired; legacy resolution times were UTC (26% looked
   "resolved before created"), fixed +5:30; 126 inconsistent records kept and flagged.

@@ -6,3 +6,4 @@ scikit-learn>=1.5,<1.9
 joblib>=1.3
 fastapi>=0.110
 uvicorn>=0.29
+plotly>=5.18,<7  # visual report (kestrel/report.py)

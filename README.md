@@ -74,6 +74,8 @@ pip install -r requirements-dev.txt && python -m pytest    # 44 tests, ~3 s
 | `out/operating_modes.md` | round 3: selective routing (84% auto-routed at 98.4%), top-k, vague-request rule per metric |
 | `docs/CHALLENGER_PROTOCOL.md` → `docs/CHALLENGER_RESULTS.md` | second round: 11 challengers (incl. fine-tuned transformer, gradient boosting, ensembles) vs the router under a pre-registered rule; none significantly better |
 | `out/errors_out_of_time.csv` | every request it got wrong in the out-of-time test |
+| `out/report.html` | **visual report: text + 12 charts** (`python -m kestrel.report`, works offline) |
+| `docs/FINAL_REPORT.pdf` | 3-page final report |
 | `docs/FINDINGS.md` | what the data showed, what I tried, changed and threw away |
 | `docs/memo.md` | one-page memo to Ritu |
 | `docs/submission-form.md` | the submission form |
