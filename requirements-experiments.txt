@@ -2,3 +2,4 @@
 -r requirements-dev.txt
 sentence-transformers>=3.0
 mlx-lm>=0.20 ; sys_platform == "darwin"
+playwright>=1.40   # video/make_video.py (uses the installed Google Chrome)
